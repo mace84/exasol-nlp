@@ -1,0 +1,3 @@
+[submodule "script-languages"]
+	path = script-languages
+	url = https://github.com/EXASOL/script-languages
