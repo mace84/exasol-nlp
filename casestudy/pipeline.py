@@ -1,13 +1,18 @@
+"""
+Implement NLP Pipelie for aspect based sentiment analysis of computer game
+reviews.
+"""
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 import spacy
-from spacy.tokens import Doc, Span
+from spacy.tokens import Doc
 from spacy.matcher.phrasematcher import PhraseMatcher
 
-df = pd.read_csv('../data/steam.csv',
+df = pd.read_csv('./data/steam.csv',
                  names=['game_id', 'review', 'sentiment', 'helpful'])
 
 #%%
@@ -30,7 +35,7 @@ df.helpful.value_counts()/df.shape[0]
 
 #%% review
 df['review_length'] = df.review.apply(lambda x: len(str(x)))
-plt.hist(df['review_length'],100)
+plt.hist(df['review_length'], 100)
 plt.show()
 
 #%% Aspact based sentiment analysis
@@ -177,4 +182,3 @@ aspect_data = pd.DataFrame({'review_id': review_ids,
                             'sentence': sentences,
                             'aspect': aspects,
                             'sentiment': sentiments})
-
