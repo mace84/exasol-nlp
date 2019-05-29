@@ -4,13 +4,13 @@ config {
 
 mapping {
     review_id                   : kc,
-                                  dd=varchar_long_default_tilde,
+                                  dd=varchar_normal_no_default,
                                   cmnt="Review ID"
     game_id                     : kc,
                                   on=game, ocmnt="Computer games.",
                                   dd=varchar_normal_no_default ,
                                   cmnt="Game ID"
-    review_text                 : dd=decimal_integer_no_default,
+    review_text                 : dd=varchar_huge_no_default,
                                   cmnt="Review text"
     review_length               : dd=decimal_integer_no_default,
                                   cmnt="Review length (No. of characters)"
