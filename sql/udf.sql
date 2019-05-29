@@ -48,8 +48,8 @@ create or replace pynlp set script UDF.review_abs(review_id int, review_text var
 
       def get_sentiment(text, sentiment_analyzer):
           """Get sentiment for a text using a sentiment analyser."""
-          #return sentiment_analyzer.polarity_scores(text)['compound']
-          return 1
+          return sentiment_analyzer.polarity_scores(text)['compound']
+
 
       def is_descriptive(span):
           """Return True if span contains an adjective or adverb."""
