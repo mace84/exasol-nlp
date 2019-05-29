@@ -21,7 +21,7 @@ df = df[['review_id', 'game_id', 'review', 'review_length', 'sentiment', 'helpfu
 
 for i in range(num_small_files):
     sample = df.sample(small_file_nrows, random_state=4711+i)
-    sample.to_csv(f'./data/steam_sample{i+1}.csv')
+    sample.to_csv(f'./data/reviews.sample{i+1}.csv')
     df = df[~df.review_id.isin(sample.review_id)]
 
-df.to_csv(f'./data/steam_sample0.csv')
+df.to_csv(f'./data/reviews.sample0.csv')
