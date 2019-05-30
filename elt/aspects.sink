@@ -1,0 +1,34 @@
+config {
+    stage       : insert
+    load        : partial
+    trigger     : after reviews timeout 5 sec
+}
+
+mapping {
+  review_id        : kc,
+                     on=game_review, oa=rev, ocmnt="Steam computer game reviews.",
+                     dd=varchar_normal_no_default,
+                     cmnt="Review ID"
+  aspect_sentences : dd=varchar_long_default_tilde,
+                     ls=review_aspect,
+                     cmnt="Text snipped of a review referring to an aspect."
+  aspect           : kc,
+                     dd=varchar_long_default_tilde, cmnt="Game aspect"
+  sentiment        : ls=review_aspect,
+                     dd=decimal_quantity_no_default,
+                     cmnt="Sentiment of the text snipped referring to an aspect. Ranges from -1 (negative) to 1 (positive)."
+}
+on=aspect, ocmnt="Aspect of a game.",
+lk= {
+     rev *-- aspect (review_aspect)
+}
+
+sql {"
+select
+  UDF.review_abs(H_GAME_REVIEW_REVIEW_ID, H_GAME_REVIEW_S_GAME_REVIEW_REVIEW_TEXT)
+from (
+  select *
+  from CHEF_SERVED.V_LATEST_L_GAME_REV
+ limit 10)
+group by H_GAME_GAME_ID
+"}
