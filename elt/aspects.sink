@@ -27,8 +27,9 @@ sql {"
 select
   UDF.review_abs(H_GAME_REVIEW_REVIEW_ID, H_GAME_REVIEW_S_GAME_REVIEW_REVIEW_TEXT)
 from (
-  select *
-  from CHEF_SERVED.V_LATEST_L_GAME_REV
- limit 10)
-group by H_GAME_GAME_ID
+  select
+    H_GAME_REVIEW_REVIEW_ID,
+    H_GAME_REVIEW_S_GAME_REVIEW_REVIEW_TEXT
+  from
+    CHEF_SERVED.V_LATEST_L_GAME_REV)
 "}
