@@ -1,0 +1,49 @@
+config {
+    type : reload
+    trigger: after aspects timeout 5 sec
+}
+
+mapping {
+    review_snipped_id           : id
+    sentiment                   : dd=decimal_quantity_no_default,
+                                  cmnt="Sentiment of the text snipped referring to an aspect. Ranges from -1 (negative) to 1 (positive)."
+    snippet                     : dd=varchar_huge_default_tilde,
+                                  cmnt="Text snipped of a review referring to an aspect."
+    aspect                      : dd=varchar_long_default_tilde,
+                                  cmnt="Aspect of a game."
+    aspect_group                : dd=varchar_long_default_tilde,
+                                  cmnt="Aspect group of a game."
+    review_id                   : dd=varchar_normal_no_default,
+                                  cmnt="Review ID"
+
+    review_text                 : dd=varchar_huge_no_default,
+                                  cmnt="Review text"
+    helpful                     : dd=decimal_integer_no_default,
+                                  cmnt="Number of users who found the review to be helpful"
+    review_length               : dd=decimal_integer_no_default,
+                                  cmnt="Review length (No. of characters)"
+    verdict                     : dd=decimal_integer_no_default,
+                                  cmnt="Overall verdict of the review positive (1) or bnegatiove (-1)"
+    game_id                     : dd=varchar_normal_no_default,
+                                  cmnt="Game ID"
+}
+
+sql {"
+select
+  sn.h_review_snippets_s_review_snippets_sentiment sentiment,
+  sn.h_review_snippets_aspect_sentences snippet,
+  regexp_substr(asp.h_aspect_aspect, '[a-z]+:[a-z]+') aspect,
+  trim(regexp_substr(asp.h_aspect_aspect, '[a-z]+:'), ':') aspect_group,
+  sn.h_game_review_review_id review_id,
+  sn.h_game_review_s_game_review_review_text review_text,
+  sn.h_game_review_s_game_review_helpful helpful,
+  sn.h_game_review_s_game_review_review_length review_length,
+  sn.h_game_review_s_game_review_verdict verdict,
+  rev.h_game_game_id game_id
+from
+  chef_served.v_latest_l_review_snippet sn
+  join chef_served.v_latest_l_review_aspect asp
+    on sn.h_review_snippets_review_snippets_key = asp.h_review_snippets_review_snippets_key
+  join chef_served.v_latest_l_game_rev rev
+  on sn.h_game_review_game_review_key = rev.h_game_review_game_review_key
+"}

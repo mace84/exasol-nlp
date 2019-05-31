@@ -74,7 +74,8 @@ def cleanup_subtrees(subtrees, nlp_vocab):
     return sorted_subtrees
 
 def run(ctx):
-
+    if not ctx.review_text:
+        return
     doc = nlp(ctx.review_text)
     for chunk in doc.noun_chunks:
         # If noun chunk contains a description (adjectives or adverbs), classify

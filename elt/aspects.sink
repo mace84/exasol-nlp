@@ -9,27 +9,26 @@ mapping {
                      on=game_review, oa=rev, ocmnt="Steam computer game reviews.",
                      dd=varchar_normal_no_default,
                      cmnt="Review ID"
-  aspect_sentences : dd=varchar_long_default_tilde,
-                     ls=review_aspect,
-                     cmnt="Text snipped of a review referring to an aspect."
+  aspect_sentences : kc,
+                     dd=varchar_huge_default_tilde,
+                     cmnt="Text snippet of a review referring to an aspect."
   aspect           : kc,
-                     dd=varchar_long_default_tilde, cmnt="Game aspect"
-  sentiment        : ls=review_aspect,
-                     dd=decimal_quantity_no_default,
+                     on=aspect, ocmnt="Aspect of a game.",
+                     dd=varchar_long_default_tilde,
+                     cmnt="Game aspect"
+  sentiment        : dd=decimal_quantity_no_default,
                      cmnt="Sentiment of the text snipped referring to an aspect. Ranges from -1 (negative) to 1 (positive)."
 }
-on=aspect, ocmnt="Aspect of a game.",
+on=review_snippets, oa=snippet, ocmnt="Text snipped of reviews refering to an aspect.",
 lk= {
-     rev *-- aspect (review_aspect)
+     rev *-- snippet (review_snippet),
+     snippet *-- aspect (review_aspect)
 }
 
 sql {"
 select
-  UDF.review_abs(H_GAME_REVIEW_REVIEW_ID, H_GAME_REVIEW_S_GAME_REVIEW_REVIEW_TEXT)
-from (
-  select
-    H_GAME_REVIEW_REVIEW_ID,
-    H_GAME_REVIEW_S_GAME_REVIEW_REVIEW_TEXT
-  from
-    CHEF_SERVED.V_LATEST_L_GAME_REV)
+  udf.review_abs(h_game_review_review_id,
+                 h_game_review_s_game_review_review_text)
+from
+  chef_served.v_latest_l_game_rev
 "}
