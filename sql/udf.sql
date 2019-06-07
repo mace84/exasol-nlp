@@ -13,7 +13,7 @@ import numpy as np
 
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from spacy.tokens import Doc
-from spacy.matcher.phrasematcher import PhraseMatcher
+from spacy.matcher import PhraseMatcher
 
 nlp = spacy.load('en_core_web_md')
 aspect_threshold = .9
@@ -32,7 +32,14 @@ aspect_tokens = {k: list(nlp.pipe(v)) for k,v in aspect_terms.items()}
 
 def get_similarities(token, token_list):
     """Get similarity of a token with all tokens in a token list."""
-    return np.array([t.similarity(token) for t in token_list])
+    try:
+        if token.has_vector:
+            similarities = [t.similarity(token) for t in token_list]
+        else:
+            similarities = []
+    except:
+        similarities = []
+    return np.array(similarities)
 
 
 def get_aspects(token, aspect_tokens, threshold):
@@ -41,12 +48,17 @@ def get_aspects(token, aspect_tokens, threshold):
 
     similarities = {k: max(get_similarities(token, v))
                     for k,v in aspect_tokens.items()}
-    return [k for k,v in similarities.items() if v > threshold]
+    similarities = [k for k,v in similarities.items() if v and v > threshold]
+    return similarities
 
 
 def get_sentiment(text, sentiment_analyzer):
     """Get sentiment for a text using a sentiment analyser."""
-    return sentiment_analyzer.polarity_scores(text)['compound']
+    try:
+        sentiment = sentiment_analyzer.polarity_scores(text)['compound']
+        return sentiment
+    except:
+        return None
 
 
 def is_descriptive(span):
@@ -56,9 +68,7 @@ def is_descriptive(span):
 
 def get_tree_span(token, doc):
     """Return a token's subtree span as Doc."""
-    tree_span = doc[doc[token.i].left_edge.i: doc[token.i].right_edge.i + 1]
-    if not isinstance(tree_span, Doc):
-        tree_span = tree_span.as_doc()
+    tree_span = Span(doc, doc[token.i].left_edge.i, doc[token.i].right_edge.i + 1)
     return tree_span
 
 
@@ -67,11 +77,13 @@ def cleanup_subtrees(subtrees, nlp_vocab):
     if len(subtrees) == 1:
         return subtrees
     sorted_subtrees = sorted(subtrees, key=lambda x: len(x))
+    sorted_tree_docs = [nlp(span.text) for span in sorted_subtrees]
     matcher = PhraseMatcher(nlp_vocab)
-    for i, tree in enumerate(sorted_subtrees):
+    for i, tree in enumerate(sorted_tree_docs):
         matcher.add(f"pattern{i}", None, tree)
-        _ = [sorted_subtrees.pop(i) for d in sorted_subtrees[i + 1:] if matcher(d)]
-    return sorted_subtrees
+        _ = [sorted_tree_docs.pop(i) for d in sorted_tree_docs[i + 1:] if matcher(d)]
+    return sorted_tree_docs
+
 
 def run(ctx):
     if not ctx.review_text:

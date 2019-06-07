@@ -1,15 +1,14 @@
 # Exasol Showcase
-A showcase illustrating how to use natural language processing methods in an 
-Exasol ELT pipeline.
+A showcase illustrating how to use natural language processing methods in an Exasol ELT pipeline.
 
 ## Use Case: Aspect Based Sentiment Analysis
 A gaming company is interested in which aspects of their games are mentioned in game reviews and how these aspects are perceived by the reviewers. The sentiment analysis of game aspects provides insights into viable strategies for game improvement.
 
-This repo implements a simple aspect based sentiment analysis as an exasol user defined function (UDF) and utilizes it in an ELT process, that is administered by areto's [Data Chef](https://github.com/areto-consulting-gmbh/Data-Chef/).
+This repo implements a simple aspect based sentiment analysis as an Exasol user defined function (UDF) and utilizes it in an ELT process, that is administered by areto's [Data Chef](https://github.com/areto-consulting-gmbh/Data-Chef/).
 
-The analysis is performed on a data set of 6.5 mio. game review from [STEAM](https://store.steampowered.com/reviews/). Details on the aspect based sentiment analysis algorith can be found in `./casestudy/`.
+The analysis is performed on a data set of 6.5 mio. game review from [STEAM](https://store.steampowered.com/reviews/). Details on the aspect based sentiment analysis algorithm can be found in `./casestudy/`.
 
-In order to execute the NLP pipeline as a UDF, this repo implements a python3 flavor for EXASOL scripting languages in the submodule `./script-languages/`. The flavor is refered to as `python3-nlp-EXASOL-6.<version>`. The NLP flavor is based on Exasol's data science flavor but adds important NLP modules such as [spacy](https://spacy.io/) and [NLTK](https://www.nltk.org/) with the language models used for the aspect based similarity scroring algorithm.
+In order to execute the NLP pipeline as a UDF, this repo implements a python3 flavor for EXASOL scripting languages in the submodule `./script-languages/`. The flavor is refered to as `python3-nlp-EXASOL-6.<version>`. The NLP flavor is based on Exasol's data science flavor but adds important NLP modules such as [spacy](https://spacy.io/) and [NLTK](https://www.nltk.org/) with the language models used for the aspect based similarity scoring algorithm.
 
 ## Exasol config
 
@@ -35,7 +34,7 @@ Connection string:
 192.168.56.101:8563  
 
 #### EXASolution
-https://192.168.56.101/   
+https://192.168.56.101/
 
 #### BucketFS
 
@@ -62,24 +61,14 @@ rm test.txt
 curl -i -X DELETE http://w:writeme@192.168.56.101:2580/models/test.txt
 ```
 
-Load client container from exasol
-```bash
-docker import http://192.168.56.101:2581/default/EXAClusterOS/ScriptLanguages-2018-05-07.tar.gz exa_udf_container 
-```
-
-Execute container to built client
-```
-docker run -v `pwd`/script-languages/python_client:/py --name=exa_udf_container -it exa_udf_container /bin/bash
-```
-
 ### NLP python
 In order to build and deploy NLP flavor python3 to Exasol, navigate to `./script-languages`, build the container with 
  ```bash
- ./build -f python3-nlp-EXASOL-6.1.0
+ ./build -f python3-nlp-EXASOL-6.0.0
  ```
 export image to tar ball 
 ```bash
-./export -f python3-nlp-EXASOL-6.1.0
+./export -f python3-nlp-EXASOL-6.0.0
 ```
 upload to exasol 
 ```bash
